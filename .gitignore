@@ -1,0 +1,17 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Output reports
+report.json
+
+# IDE / Editor configuration
+.vscode/
+.idea/
+*.swp
