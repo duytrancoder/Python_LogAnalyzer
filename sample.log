@@ -1,0 +1,6 @@
+2026-09-29T09:00:00Z INFO api started
+2026-09-29T09:02:00Z WARNING disk usage reached 82 percent
+BROKEN LINE
+2026-09-29T09:03:00Z ERROR database connection failed
+2026-09-29T09:04:00Z INFO retry started
+2026-09-29T09:05:00Z ERROR retry failed
