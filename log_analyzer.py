@@ -1,3 +1,7 @@
+import argparse
+import json
+import sys
+
 LEVELS = ("INFO", "WARNING", "ERROR")
 
 
@@ -49,5 +53,42 @@ def print_summary(report):
     print(f"Malformed lines: {report['malformed_lines']}")
 
 
-report = analyze_log("sample.log")
-print_summary(report)
+def save_report(report, output_file):
+    with open(output_file, "w", encoding="utf-8") as file:
+        json.dump(report, file, indent=2)
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Analyze a simple application log."
+    )
+    parser.add_argument(
+        "log_file",
+        help="Path to the log file to analyze.",
+    )
+    parser.add_argument(
+        "--output",
+        default="report.json",
+        help="Path for the JSON report.",
+    )
+    return parser
+
+
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+
+    try:
+        report = analyze_log(args.log_file)
+        save_report(report, args.output)
+    except OSError as error:
+        print(f"Could not process a file: {error}")
+        return 1
+
+    print_summary(report)
+    print(f"JSON report written to {args.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
