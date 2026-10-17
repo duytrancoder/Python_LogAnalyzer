@@ -43,6 +43,17 @@ class TestLogAnalyzer(unittest.TestCase):
             parse_log_line("2026-09-29T09:00:00Z DEBUG verbose trace")
         )
 
+        # Invalid timestamp format
+        self.assertIsNone(
+            parse_log_line("INVALID_TIMESTAMP INFO server starting")
+        )
+        self.assertIsNone(
+            parse_log_line("2026-99-99T99:99:99Z INFO invalid date numbers")
+        )
+        self.assertIsNone(
+            parse_log_line("2026/09/29 INFO missing time component")
+        )
+
     def test_analyze_log_with_sample(self):
         report = analyze_log("sample.log")
         self.assertEqual(report["counts"]["INFO"], 2)

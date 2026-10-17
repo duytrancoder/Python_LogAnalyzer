@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 import json
 import sys
 
@@ -12,6 +13,11 @@ def parse_log_line(line):
         return None
 
     timestamp, level, message = parts
+
+    try:
+        datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
     if level not in LEVELS:
         return None
