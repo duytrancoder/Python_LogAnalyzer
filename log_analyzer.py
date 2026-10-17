@@ -69,14 +69,20 @@ def build_parser():
     parser.add_argument(
         "--output",
         default="report.json",
-        help="Path for the JSON report.",
+        help="Path for the JSON report (default: report.json).",
+    )
+    parser.add_argument(
+        "--max-errors",
+        type=int,
+        default=None,
+        help="Maximum allowed ERROR count before failing the CI check.",
     )
     return parser
 
 
-def main():
+def main(argv=None):
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     try:
         report = analyze_log(args.log_file)
@@ -87,6 +93,14 @@ def main():
 
     print_summary(report)
     print(f"JSON report written to {args.output}")
+
+    if args.max_errors is not None and report["counts"]["ERROR"] > args.max_errors:
+        print(
+            f"CI check failed: ERROR count ({report['counts']['ERROR']}) "
+            f"exceeds maximum threshold of {args.max_errors}."
+        )
+        return 2
+
     return 0
 
 

@@ -1,22 +1,74 @@
 # DevOps Log Analyzer with Python
 
-A command-line tool built with Python to parse application logs into structured severity counts, resiliently handle malformed records, and output machine-readable JSON summaries for CI/CD automation.
+A resilient Python CLI tool that parses application logs into structured severity metrics, gracefully handles malformed records, and exports machine-readable JSON reports for CI/CD automation.
 
-## Project Objectives
+## Features
 
-- **Raw Log Reading**: Parse log files line-by-line safely using Python context managers.
-- **Resilient Parsing**: Handle malformed log lines gracefully without crashing the analyzer.
-- **Severity Aggregation**: Count occurrences of `INFO`, `WARNING`, and `ERROR` records.
-- **CLI & Automation**: Provide flexible command-line arguments and structured JSON output.
-- **CI/CD Integration**: Return actionable exit codes based on error thresholds.
+- **Robust Log Parsing**: Validates timestamps, severity levels (`INFO`, `WARNING`, `ERROR`), and arbitrary log messages.
+- **Resilience Against Malformed Logs**: Skips unparseable lines without crashing and tallies `malformed_lines`.
+- **JSON Report Export**: Automatically saves structured summaries formatted for downstream automations.
+- **CI/CD Quality Gate**: Configurable `--max-errors` threshold returning pipeline-friendly exit status codes.
+- **Zero Third-Party Dependencies**: Built entirely using Python standard libraries (`argparse`, `json`, `sys`, `unittest`).
 
-## Setup
+---
 
-1. **Activate Virtual Environment**:
-   ```bash
-   source .venv/bin/activate
-   ```
-2. **Verify Python Environment**:
-   ```bash
-   which python3
-   ```
+## Getting Started
+
+### 1. Environment Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/duytrancoder/Python_LogAnalyzer.git
+cd Python_LogAnalyzer
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
+## Usage
+
+### Basic Execution
+
+Analyze a log file and write the report to the default `report.json`:
+
+```bash
+python3 log_analyzer.py sample.log
+```
+
+### Specify Custom Output File
+
+```bash
+python3 log_analyzer.py sample.log --output custom_report.json
+```
+
+### Enforce CI/CD Error Threshold
+
+Fail the job (exit status code `2`) if the number of `ERROR` lines exceeds your maximum allowed limit:
+
+```bash
+# Example: Allow up to 1 error (fails if > 1)
+python3 log_analyzer.py sample.log --max-errors 1
+```
+
+---
+
+## Exit Status Codes
+
+| Code | Meaning | Description |
+|:---:|:---|:---|
+| **`0`** | **Success** | Analysis completed successfully within acceptable thresholds. |
+| **`1`** | **File Error** | Missing file, permission denied, or OS I/O failure. |
+| **`2`** | **Threshold Failed** | `ERROR` count exceeded the `--max-errors` threshold in CI check. |
+
+---
+
+## Running Unit Tests
+
+Run the built-in test suite:
+
+```bash
+python3 -m unittest test_log_analyzer.py -v
+```
