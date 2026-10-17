@@ -1,5 +1,7 @@
 # DevOps Log Analyzer with Python
 
+[![CI Pipeline](https://github.com/duytrancoder/Python_LogAnalyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/duytrancoder/Python_LogAnalyzer/actions/workflows/ci.yml)
+
 A resilient Python CLI tool that parses application logs into structured severity metrics, gracefully handles malformed records, and exports machine-readable JSON reports for CI/CD automation.
 
 ## Features
