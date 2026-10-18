@@ -7,8 +7,47 @@ on:
       - "v*"
 
 jobs:
+  test:
+    name: Quality Gate & Test Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Check code formatting and linting with Ruff
+        run: |
+          ruff check .
+
+      - name: Run Pytest with coverage gate
+        run: |
+          pytest --cov=log_analyzer --cov-report=term-missing
+
+      - name: Verify CI Quality Gate (Threshold Failure Exit Code 2)
+        run: |
+          set +e
+          python log_analyzer.py sample.log --max-errors 1
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 2 ]; then
+            echo "Expected exit code 2 when errors exceed threshold, got $EXIT_CODE"
+            exit 1
+          fi
+          echo "Quality Gate verified before release."
+
   build-and-publish:
     name: Build & Push Docker Image to GHCR
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
