@@ -61,6 +61,14 @@ python3 log_analyzer.py sample.log --max-errors 1
 
 Run the analyzer anywhere without requiring Python installed:
 
+### Option A: Using Pre-built Image from GHCR (No Build Required)
+
+```bash
+docker run --rm -v "$(pwd)":/data:ro ghcr.io/duytrancoder/python_loganalyzer:latest /data/sample.log
+```
+
+### Option B: Build & Run Locally
+
 ```bash
 # 1. Build the lightweight image
 docker build -t log-analyzer .
@@ -84,10 +92,28 @@ docker run --rm -v "$(pwd)":/data:ro log-analyzer /data/sample.log --max-errors 
 
 ---
 
-## Running Unit Tests
+## Code Quality & Testing
 
-Run the built-in test suite:
+### 1. Run Linter (Ruff)
 
 ```bash
-python3 -m unittest test_log_analyzer.py -v
+ruff check .
 ```
+
+### 2. Run Tests with Code Coverage (Pytest)
+
+```bash
+pytest --cov=log_analyzer --cov-report=term-missing
+```
+
+---
+
+## Automated Release (CD)
+
+To publish a new Docker image release to GitHub Container Registry (GHCR):
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+This automatically triggers the `.github/workflows/release.yml` pipeline.
