@@ -57,6 +57,23 @@ python3 log_analyzer.py sample.log --max-errors 1
 
 ---
 
+## Running with Docker (Zero Host Dependencies)
+
+Run the analyzer anywhere without requiring Python installed:
+
+```bash
+# 1. Build the lightweight image
+docker build -t log-analyzer .
+
+# 2. Run analysis by mounting your log file directory
+docker run --rm -v "$(pwd)":/data:ro log-analyzer /data/sample.log
+
+# 3. Enforce CI threshold inside Docker
+docker run --rm -v "$(pwd)":/data:ro log-analyzer /data/sample.log --max-errors 1
+```
+
+---
+
 ## Exit Status Codes
 
 | Code | Meaning | Description |

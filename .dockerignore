@@ -1,0 +1,27 @@
+# Git
+.git/
+.gitignore
+
+# Python virtual environment & bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Test & coverage artifacts
+test_*.py
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+pyproject.toml
+requirements-dev.txt
+
+# Local log files and output reports
+*.log
+*.json
+
+# IDE
+.vscode/
+.idea/
