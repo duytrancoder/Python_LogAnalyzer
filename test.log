@@ -1,0 +1,16 @@
+2026-10-17T08:00:01Z INFO Service payment-gateway initialized successfully
+2026-10-17T08:00:15Z INFO Worker pool created with 8 workers
+2026-10-17T08:01:23Z INFO Processing transaction txn_981245
+2026-10-17T08:02:10Z WARNING High CPU utilization detected: 87 percent
+CORRUPTED PACKET PAYLOAD DUMP
+2026-10-17T08:03:45Z ERROR Payment gateway timed out after 30000ms
+2026-10-17T08:04:00Z INFO Retry scheduled for transaction txn_981245
+2026-10-17T08:04:30Z WARNING Database connection pool reaching maximum limit (48/50)
+2026-10-17T08:05:12Z ERROR Failed to acquire database lock for txn_981245
+2026-10-17T08:06:00Z DEBUG Cache lookup missed for key: customer_auth_profile_443
+2026-10-17T08:07:18Z WARNING Cache eviction frequency exceeds normal threshold
+2026-10-17T08:08:50Z ERROR Redis connection refused at redis.internal:6379
+2026-10-17T08:09:15Z INFO Failover to replica database initiated
+UNEXPECTED EOF WHILE PARSING HEADER
+2026-10-17T08:10:05Z ERROR Circuit breaker tripped for external auth provider
+2026-10-17T08:11:30Z INFO System restored to normal operating state
