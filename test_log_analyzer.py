@@ -151,6 +151,18 @@ class TestLogAnalyzer(unittest.TestCase):
             # 3. Missing file -> exit 1
             exit_code = main(["non_existent.log", "--output", temp_out])
             self.assertEqual(exit_code, 1)
+
+            # 4. Permission denied file -> exit 1
+            with tempfile.NamedTemporaryFile(delete=False) as no_perm:
+                no_perm_path = no_perm.name
+            try:
+                os.chmod(no_perm_path, 0)
+                exit_code = main([no_perm_path, "--output", temp_out])
+                self.assertEqual(exit_code, 1)
+            finally:
+                os.chmod(no_perm_path, 0o644)
+                if os.path.exists(no_perm_path):
+                    os.remove(no_perm_path)
         finally:
             if os.path.exists(temp_out):
                 os.remove(temp_out)
