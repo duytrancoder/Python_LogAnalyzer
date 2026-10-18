@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    name: Test & Validate Python Log Analyzer
+  lint-and-test:
+    name: Lint & Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,12 +22,22 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pip"
 
-      - name: Run automated unit tests
+      - name: Install dependencies
         run: |
-          python -m unittest test_log_analyzer.py -v
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
 
-      - name: Test CLI execution with sample log
+      - name: Check code formatting and linting with Ruff
+        run: |
+          ruff check .
+
+      - name: Run Pytest with coverage gate
+        run: |
+          pytest --cov=log_analyzer --cov-report=term-missing
+
+      - name: Verify CLI with sample log
         run: |
           python log_analyzer.py sample.log --output report.json
           python -c "import json; data = json.load(open('report.json')); assert data['counts']['ERROR'] == 2; assert data['malformed_lines'] == 1"
@@ -42,3 +52,37 @@ jobs:
             exit 1
           fi
           echo "Quality Gate verified: Exit code 2 returned successfully as expected."
+
+  docker-build-check:
+    name: Docker Build & Smoke Test
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: log-analyzer:ci
+
+      - name: Test container execution with mounted volume
+        run: |
+          docker run --rm -v "$(pwd)":/data:ro log-analyzer:ci /data/sample.log
+
+      - name: Test container CI quality gate exit code
+        run: |
+          set +e
+          docker run --rm -v "$(pwd)":/data:ro log-analyzer:ci /data/sample.log --max-errors 1
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 2 ]; then
+            echo "Expected exit code 2 from container, got $EXIT_CODE"
+            exit 1
+          fi
+          echo "Docker container Quality Gate verified: Exit code 2 returned."
