@@ -1,7 +1,7 @@
 import argparse
-from datetime import datetime
 import json
 import sys
+from datetime import datetime
 
 LEVELS = ("INFO", "WARNING", "ERROR")
 
